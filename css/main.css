@@ -1,0 +1,675 @@
+/*
+ * HTML5 Boilerplate
+ *
+ * What follows is the result of much research on cross-browser styling.
+ * Credit left inline and big thanks to Nicolas Gallagher, Jonathan Neal,
+ * Kroc Camen, and the H5BP dev community and team.
+ */
+
+/* ==========================================================================
+   Base styles: opinionated defaults
+   ========================================================================== */
+
+html,
+button,
+input,
+select,
+textarea {
+    color: #222;
+}
+
+body {
+    font-size: 1em;
+    line-height: 1.4;
+}
+
+/*
+ * Remove text-shadow in selection highlight: h5bp.com/i
+ * These selection rule sets have to be separate.
+ * Customize the background color to match your design.
+ */
+
+::-moz-selection {
+    background: #b3d4fc;
+    text-shadow: none;
+}
+
+::selection {
+    background: #b3d4fc;
+    text-shadow: none;
+}
+
+/*
+ * A better looking default horizontal rule
+ */
+
+hr {
+    display: block;
+    height: 1px;
+    border: 0;
+    border-top: 1px solid #ccc;
+    margin: 1em 0;
+    padding: 0;
+}
+
+/*
+ * Remove the gap between images and the bottom of their containers: h5bp.com/i/440
+ */
+
+img {
+    vertical-align: middle;
+}
+
+/*
+ * Remove default fieldset styles.
+ */
+
+fieldset {
+    border: 0;
+    margin: 0;
+    padding: 0;
+}
+
+/*
+ * Allow only vertical resizing of textareas.
+ */
+
+textarea {
+    resize: vertical;
+}
+
+/* ==========================================================================
+   Author's custom styles
+   ========================================================================== */
+
+html,
+body {
+    margin: 20px;
+}
+
+/* OuterContainer */
+.windowOuterContainer {
+  position: relative;
+  z-index: 199;
+  margin: 0 6px 6px;
+}
+
+.window {
+  position: relative;
+  margin: 0;
+  width: 800px;
+  background-color: hsla(194,19%,44%,.4);
+  background-image: -moz-linear-gradient(top, rgba(255,255,255,0), rgba(255,255,255,.5) 200px, rgba(255,255,255,0.0) 203px), 
+                    -moz-linear-gradient(left, rgba(255,255,255,.3), rgba(255,255,255,0) 20%, rgba(255,255,255,0) 80%, rgba(255,255,255,0.3)), 
+                    -moz-linear-gradient(30deg, rgba(255,255,255,0), rgba(255,255,255,0) 87%, rgba(255,255,255,.1) 87.5%, rgba(255,255,255,.5)),
+                    -moz-repeating-linear-gradient(30deg, rgba(255,255,255,0), rgba(255,255,255,0) 30%, rgba(255,255,255,.05) 30.5%, rgba(255,255,255,.05) 38%, rgba(255,255,255,0) 38.5%),
+                    -moz-repeating-linear-gradient(30deg, rgba(255,255,255,0), rgba(255,255,255,0) 27%, rgba(255,255,255,.05) 27.5%, rgba(255,255,255,.05) 35%, rgba(255,255,255,0) 35.5%),
+                    -moz-linear-gradient(top, rgba(54,83,105,0.3), rgba(54,83,105,0.3));
+  border: none;
+  border-radius: 6px;
+  box-shadow: 0 0 0 1px rgba(0,0,0,.75),
+                   0 1px 10px 0 rgba(0,0,0,.95),
+                   0 0 0 1px rgba(255,255,255,.5) inset;
+  color: hsl(0,0%,10%);
+  font-family: Segoe UI, Verdana, sans-serif;
+  overflow: hidden;
+  font-size: 0;
+  line-height: 0;
+}
+
+/* Titlebar and Widgets */
+.titleBar {
+  display: -moz-box;
+  -moz-box-orient: horizontal;
+  width: 100%;
+  height: 19px;
+}
+
+.titleBarSpacer {
+  -moz-box-flex: 1;
+  min-width: 10px !important;
+}
+
+.windowControls {
+  position: relative;
+  display: -moz-box;
+  -moz-box-orient: horizontal;
+  margin: 0 -1px;
+  border-bottom-left-radius: 3.5px;
+  box-shadow: 0 0 0 1px hsla(0,0%,100%,.25);
+  z-index: 99999;
+}
+
+.widget {
+  -moz-box-flex: 1;
+  width: 26px;
+  background-image: -moz-linear-gradient(hsla(210,30%,85%,.65), hsla(209,13%,54%,.65));
+  background-repeat: no-repeat;
+  background-position: center 2px, top left;
+  background-clip: border-box;
+  background-origin: border-box;
+  box-shadow: 0 1px 0 rgba(255,255,255,.35) inset,
+              0 0 0 1px rgba(255,255,255,.35) inset;
+  border: 1px solid hsla(211,34%,23%,.75);
+  border-top: none;
+  border-right: none;
+  -moz-transition-property: background-color, box-shadow;
+  -moz-transition-duration: 100ms;
+  -moz-transition-timing-function: ease;
+}
+
+.widget:hover {
+  background-color: hsla(0,0%,100%,.65);
+}
+.widget:hover:active {
+  background-color: hsla(205,11%,45%,.65);
+  box-shadow: 0 1px 1px hsla(0,0%,0%,.5) inset;
+}
+
+.widget:first-child {
+  border-bottom-left-radius: 3px;
+}
+
+.widget:last-child {
+  border-right: 1px solid hsla(211,34%,23%,.75);
+  border-radius: 0 6px 0 0;
+}
+
+.widget.widgetMinimize {
+  background-image: url(../images-win7/windowCloseMinimize.png),
+                    -moz-linear-gradient(hsla(210,30%,85%,.65), hsla(209,13%,54%,.65));
+}
+.widget.widgetMaximize {
+  background-image: url(../images-win7/windowCloseMaximize.png),
+                    -moz-linear-gradient(hsla(210,30%,85%,.65), hsla(209,13%,54%,.65));
+}
+.widget.widgetClose {
+  width: 46px;
+  background-color: #b23636;
+  background-image: url(../images-win7/windowCloseIcon.png),
+                    -moz-radial-gradient(hsla(0,100%,87%,.35), hsla(0,100%,75%,0)),
+                    -moz-linear-gradient(top, hsla(0,100%,80%,.65), hsla(0,100%,80%,0));
+  background-repeat: no-repeat;
+  background-position: 15px 2px, center center, top left;
+  box-shadow: 0 1px 0 hsla(9,100%,90%,.25) inset,
+              0 0 0 1px hsla(9,100%,90%,.35) inset;
+  border-color: #4c0f0f;
+}
+.widget.widgetClose:hover {
+  background-color: #e52e2e;
+}
+.widget.widgetClose:hover:active {
+  background-color: #8c0e0e;
+}
+
+#tabs {
+  display: -moz-box;
+  width: 100%;
+  -moz-box-orient: horizontal;
+  position: relative;
+  margin: -4px 0 0;
+  height: 31px;
+}
+.tabStripBackground {
+  position: absolute;
+  top: 35px;
+  left: 40px;
+  width: 860px;
+  height: 0px;
+  background-color: #aebdcc;
+  box-shadow: 0 0 30px 25px #aebdcc;
+  opacity: .85;
+  z-index: 1;
+}
+.tab {
+  padding: 8px 25px 7px;
+  margin-left: -16px;
+  min-width: 210px;
+  max-width: 210px;
+  -moz-user-select:none;
+  cursor: default;
+}
+.tab:first-child {
+  margin-left: 0;
+}
+.tab:hover {
+  background-image: url(../images-win7/tabBackgroundStart.png),
+                    url(../images-win7/tabBackgroundMiddle.png),
+                    url(../images-win7/tabBackgroundEnd.png);
+  background-repeat: no-repeat,
+                     no-repeat,
+                     no-repeat;
+  background-position: left,
+                       30px,
+                       right;
+  background-size: 30px 31px,
+                   -moz-calc(100% - 60px) 31px,
+                   30px 31px;
+}
+.tab.active {
+  position: relative;
+  background-image: url(../images-win7/tabActiveStart.png),
+                    url(../images-win7/tabActiveMiddle.png),
+                    url(../images-win7/tabActiveEnd.png);
+  background-repeat: no-repeat,
+                     no-repeat,
+                     no-repeat;
+  background-position: left,
+                       30px,
+                       right;
+  background-size: 30px 31px,
+                   -moz-calc(100% - 60px) 31px,
+                   30px 31px;
+  z-index: 399;
+}
+
+.tab > .favicon {
+  float: left;
+  margin-right: 6px;
+  width: 16px;
+  height: 16px;
+  background-image: url(../images-win7/favicon-firefox.png);
+  opacity: .9;
+}
+.tab:hover > .favicon,
+.tab.active  > .favicon {
+  opacity: 1;
+}
+.tab > .label {
+  float: left;
+  width: -moz-calc(100% - 38px);
+  height: 16px;
+  color: #030e1a;
+  font-size: 12px;
+  line-height: 14px;
+  overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+  opacity: .9;
+}
+.tab:hover > .label,
+.tab.active  > .label {
+  opacity: 1;
+}
+.tab.active  > .label {
+  width: -moz-calc(100% - 38px);
+}
+.tab > .close {
+  float: left;
+  width: 16px;
+  height: 16px;
+  background-image: -moz-image-rect(url(../images-win7/closeTab.png), 0, 16, 16, 0);
+}
+.tab > .close:hover {
+  background-image: -moz-image-rect(url(../images-win7/closeTab.png), 0, 32, 16, 16);
+}
+.tab > .close:hover:active {
+  background-image: -moz-image-rect(url(../images-win7/closeTab.png), 0, 48, 16, 32);
+}
+
+.toolbarButton.backButton + #urlbar {
+  -moz-margin-start: -20px;
+}
+
+
+/* InnerContainer */
+.innerContainer {
+  position: relative;
+  z-index: 299;
+  margin-top: -1px;
+  width: 100%;
+  height: 100%;
+  border-radius: 2.5px;
+  box-shadow: 0 0 0 1px hsla(0,0%,0%,.3),
+              0 0 2px hsla(0,0%,0%,.1);
+  overflow: hidden;
+}
+
+#navbar {
+  position: relative;
+  display: -moz-box;
+  -moz-box-orient: horizontal;
+  width: 100%;
+  height: 40px;
+  background-image: -moz-linear-gradient(#ecf3fa, #dcebfa);
+  border-radius: 2.5px 2.5px 0 0;
+  border-bottom: 1px solid hsl(210,22%,78%);
+  box-shadow: inset 0 1px 0 hsla(0,0%,100%,.8);
+  z-index: 599;
+}
+.toolbarButton {
+  -moz-box-flex: 0;
+  min-width: 16px;
+  padding: 3px 7px;
+  margin: 8px 2px 8px 0;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  -moz-user-select:none;
+  cursor: default;
+  -moz-transition-property: background-color, border-color, box-shadow;
+  -moz-transition-duration: 150ms;
+  -moz-transition-timing-function: ease;
+}
+.toolbarButton.backButton {
+  position: relative;
+  z-index: 99;
+  padding: 6px;
+  margin: 4px 8px 4px 4px;
+  background-color: #dce7ef;
+  background-image: -moz-linear-gradient(hsla(0,0%,100%,.8), hsla(0,0%,100%,.2));
+  background-clip: padding-box;
+  border: 1px solid hsla(210,54%,20%,.2);
+  border-color: hsla(210,54%,20%,.2) hsla(210,54%,20%,.3) hsla(210,54%,20%,.35);
+  border-radius: 100%;
+  box-shadow: 0 1px 0 hsla(0,0%,100%,.3) inset,
+              0 0 0 1px hsla(0,0%,100%,.3) inset,
+              0 1px 0 hsla(210,54%,20%,.03);
+  -moz-user-select:none;
+  cursor: default;
+  -moz-transition-property: background-color, border-color, box-shadow;
+  -moz-transition-duration: 150ms;
+  -moz-transition-timing-function: ease;
+}
+.toolbarButton.backButton:hover {
+  background-color: #dce7ef;
+  background-image: -moz-linear-gradient(hsla(0,0%,100%,.8), hsla(0,0%,100%,.2));
+  border-color: hsla(210,54%,20%,.3) hsla(210,54%,20%,.35) hsla(210,54%,20%,.4);
+  box-shadow: 0 1px 0 hsla(0,0%,100%,.3) inset,
+              0 0 0 1px hsla(0,0%,100%,.3) inset,
+              0 1px 0 hsla(210,54%,20%,.03),
+              0 0 2px hsla(210,54%,20%,.1);
+  -moz-transition-property: background-color, border-color, box-shadow;
+  -moz-transition-duration: 150ms;
+  -moz-transition-timing-function: ease;
+}
+.toolbarButton.backButton:hover:active {
+  background-color: #c3ced9;
+  -moz-transition-property: background-color, border-color, box-shadow;
+  -moz-transition-duration: 10ms;
+  -moz-transition-timing-function: linear;
+}
+
+.toolbarButton.backButton::before {
+  display: inline-block;
+  content: url(../images-win7/toolbarButton-back.png);
+  width: 18px;
+  height: 18px;
+}
+
+.toolbarButton.forwardButton {
+  padding: 3px 4px 3px 10px;
+}
+.toolbarButton.forwardButton::before {
+  display: inline-block;
+  content: url(../images-win7/toolbarButton-Forward.png);
+}
+.toolbarButton.forwardButton:hover {
+}
+#urlbar,
+#searchbar {
+  -moz-box-flex: 1;
+  margin: 8px 6px 8px 0;
+  -moz-padding-start:16px;
+  -moz-padding-end: 0;
+  background-color: hsla(0,0%,100%,.9);
+  border: 1px solid transparent;
+  border-color: hsla(210,54%,20%,.25) hsla(210,54%,20%,.27) hsla(210,54%,20%,.3);
+  border-radius: 2px;
+  box-shadow: 0 1px 0 hsla(0,0%,0%,.01) inset,
+              0 1px 0 hsla(0,0%,100%,.1);
+  color: #808080;
+  font-size: 12px;
+  line-height: 20px;
+  outline-style: none;
+}
+
+#urlbar:hover,
+#searchbar:hover {
+  border-color: hsla(210,54%,20%,.35) hsla(210,54%,20%,.37) hsla(210,54%,20%,.4);
+  background-color: hsla(0,0%,100%,1);
+}
+#urlbar:focus,
+#searchbar:focus {
+  background-color: hsla(0,0%,100%,1);
+  border-color: #65bbfc #6bb7ed #65afe0;
+}
+
+#searchbar {
+  -moz-box-flex: 0;
+  max-width: 220px;
+  -moz-padding-start: 6px;
+  -moz-padding-end: 0;
+}
+
+#panels {
+}
+.panel {
+    width: 100%;
+    height: 400px;
+    display: none;
+    background-color: #fff;
+    color: #111;
+    font-size: 0;
+    padding: 10px;
+}
+
+.panel.active {
+    display: block;
+}
+
+.panel > * {
+    font-size: 14px;
+    line-height: 18px;
+}
+
+.mouse-click {
+  position: absolute;
+  pointer-events: none;
+  z-index: 1000;
+  width: 10px;
+  height: 10px;
+  margin: 5px 0 0 5px;
+  border-radius: 5px;
+  border: 3px solid rgba(288, 58, 41, 1);
+  -moz-transition-property: width, height, margin, border;
+  -moz-transition-duration: 2s;
+  -moz-transition-timing-function: ease;
+}
+/* This class is immediately applied for the purpose of transitioning:*/
+.mouse-clicking {
+    width: 40px;
+    height: 40px;
+    margin: 20px 0 0 20px;
+    border-radius: 20px;
+    border: 3px solid rgba(0, 0, 0, 0);
+}
+
+/* ==========================================================================
+   Helper classes
+   ========================================================================== */
+
+/*
+ * Image replacement
+ */
+
+.ir {
+    background-color: transparent;
+    border: 0;
+    overflow: hidden;
+    /* IE 6/7 fallback */
+    *text-indent: -9999px;
+}
+
+.ir:before {
+    content: "";
+    display: block;
+    width: 0;
+    height: 150%;
+}
+
+/*
+ * Hide from both screenreaders and browsers: h5bp.com/u
+ */
+
+.hidden {
+    display: none !important;
+    visibility: hidden;
+}
+
+/*
+ * Hide only visually, but have it available for screenreaders: h5bp.com/v
+ */
+
+.visuallyhidden {
+    border: 0;
+    clip: rect(0 0 0 0);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px;
+}
+
+/*
+ * Extends the .visuallyhidden class to allow the element to be focusable
+ * when navigated to via the keyboard: h5bp.com/p
+ */
+
+.visuallyhidden.focusable:active,
+.visuallyhidden.focusable:focus {
+    clip: auto;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    position: static;
+    width: auto;
+}
+
+/*
+ * Hide visually and from screenreaders, but maintain layout
+ */
+
+.invisible {
+    visibility: hidden;
+}
+
+/*
+ * Clearfix: contain floats
+ *
+ * For modern browsers
+ * 1. The space content is one way to avoid an Opera bug when the
+ *    `contenteditable` attribute is included anywhere else in the document.
+ *    Otherwise it causes space to appear at the top and bottom of elements
+ *    that receive the `clearfix` class.
+ * 2. The use of `table` rather than `block` is only necessary if using
+ *    `:before` to contain the top-margins of child elements.
+ */
+
+.clearfix:before,
+.clearfix:after {
+    content: " "; /* 1 */
+    display: table; /* 2 */
+}
+
+.clearfix:after {
+    clear: both;
+}
+
+/*
+ * For IE 6/7 only
+ * Include this rule to trigger hasLayout and contain floats.
+ */
+
+.clearfix {
+    *zoom: 1;
+}
+
+/* ==========================================================================
+   EXAMPLE Media Queries for Responsive Design.
+   These examples override the primary ('mobile first') styles.
+   Modify as content requires.
+   ========================================================================== */
+
+@media only screen and (min-width: 35em) {
+    /* Style adjustments for viewports that meet the condition */
+}
+
+@media print,
+       (-o-min-device-pixel-ratio: 5/4),
+       (-webkit-min-device-pixel-ratio: 1.25),
+       (min-resolution: 120dpi) {
+    /* Style adjustments for high resolution devices */
+}
+
+/* ==========================================================================
+   Print styles.
+   Inlined to avoid required HTTP connection: h5bp.com/r
+   ========================================================================== */
+
+@media print {
+    * {
+        background: transparent !important;
+        color: #000 !important; /* Black prints faster: h5bp.com/s */
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+
+    a,
+    a:visited {
+        text-decoration: underline;
+    }
+
+    a[href]:after {
+        content: " (" attr(href) ")";
+    }
+
+    abbr[title]:after {
+        content: " (" attr(title) ")";
+    }
+
+    /*
+     * Don't show links for images, or javascript/internal links
+     */
+
+    .ir a:after,
+    a[href^="javascript:"]:after,
+    a[href^="#"]:after {
+        content: "";
+    }
+
+    pre,
+    blockquote {
+        border: 1px solid #999;
+        page-break-inside: avoid;
+    }
+
+    thead {
+        display: table-header-group; /* h5bp.com/t */
+    }
+
+    tr,
+    img {
+        page-break-inside: avoid;
+    }
+
+    img {
+        max-width: 100% !important;
+    }
+
+    @page {
+        margin: 0.5cm;
+    }
+
+    p,
+    h2,
+    h3 {
+        orphans: 3;
+        widows: 3;
+    }
+
+    h2,
+    h3 {
+        page-break-after: avoid;
+    }
+}

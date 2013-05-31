@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title></title>
+
+        <link rel="stylesheet" href="css/normalize.css">
+        <link rel="stylesheet" href="css/main.css">
+    </head>
+    <body>
+
+    <div class="windowContainer">
+    <div class="window">
+        <div class="titleBar">
+          <div class="titleBarSpacer"></div>
+          <div class="windowControls">
+            <div class="widget widgetMinimize"></div>
+            <div class="widget widgetMaximize"></div>
+            <div class="widget widgetClose"></div>
+          </div>
+        </div>
+
+        <div id="tabs">
+            <div class="tabStripBackground"></div>
+        </div>
+        <div class="innerContainer">
+            <div id="navbar">
+                <div class="toolbarButton backButton"></div>
+                <input id="urlbar"/>
+                <input id="searchbar"/>
+            </div>
+            <div id="panels"></div>
+        </div>
+    </div>
+    </div>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.1/jquery.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.1.6/d3.min.js"></script>
+    <script type="text/javascript">
+        function activateTab(options) {
+            var id = options.tabid,
+                tab = $("#tab-" + id),
+                panel = $("#panel-" + id);
+
+            // if this tab doesn't exist we need to make it
+            if (tab.length <= 0) {
+                addTab(options);
+                return;
+            }
+
+            tab.data("options", options);
+
+            if (!panel.hasClass("active") && !tab.hasClass("active")) {
+                $(".tab,.panel").removeClass("active");
+            }
+            tab.addClass("active");
+            panel.addClass("active");
+            $("#urlbar").val(tab.data("options").url);
+            panel.empty().append($("<pre/>").text(JSON.stringify(options,null, " ")));
+        }
+        function readyTab(options) {
+            var id = options.tabid,
+                tab = $("#tab-" + id),
+                panel = $("#panel-" + id);
+
+
+            // if this tab doesn't exist we need to make it
+            if (tab.length <= 0) {
+                // XXX This shouldn't happen if we get tabids from the initial event
+                // clear out our fake tab
+                if ($("#tab-0").length > 0) {
+                    closeTab(0);
+                }
+                addTab(options);
+                return;
+            }
+
+            tab.data("options", options);
+            tab.find(".label").text(options.title);
+            $("#urlbar").val(options.url);
+            panel.empty().append($("<pre/>").text(JSON.stringify(options,null, " ")));
+        }
+        function addTab(options) {
+            options = options || { inBackground : false };
+
+            var tab = $("<div/>").attr("id", "tab-" + options.tabid).
+                                  data("options", options).
+                                  addClass("tab").
+                                  append(
+                                    $("<div/>").addClass("favicon"),
+                                    $("<div/>").addClass("label").text(options.title),
+                                    $("<div/>").addClass("close")
+                                  );
+
+            var panel = $("<div/>").attr("id", "panel-" + options.tabid).
+                                    addClass("panel").
+                                    append($("<pre/>").text(JSON.stringify(options,null, " ")));
+
+            var activate = function() {
+                if (!panel.hasClass("active") && !tab.hasClass("active")) {
+                    $(".tab,.panel").removeClass("active");
+                }
+                tab.addClass("active");
+                panel.addClass("active");
+                $("#urlbar").val(tab.data("options").url);
+            };
+
+            tab.click(activate);
+            tab.insertBefore($("#tabs > .tabStripBackground"));
+
+            $("#panels").append(panel);
+
+            if (!options.inBackground) {
+                activate();
+            }
+        }
+        function closeTab(id) {
+            var tab = $("#tab-" + id),
+                panel = $("#panel-" + id);
+            if (panel.hasClass("active") && tab.hasClass("active") && tab.next(".tab").length > 0) {
+                console.log("ACTIVATING", id);
+                activateTab(tab.next(".tab").data("options"));
+            }
+            tab.remove();
+            panel.remove();
+        }
+        $(document).ready(function () {
+            //addTab({ id : 1234, url : "http://mozilla.org", title : "Mozilla.org" });
+            addTab({ tabid : 0, url : "about:blank", title : "" });
+            var alldata;
+            $.getJSON("sample.json",function(data){alldata = data;}).done(
+              function () {
+                alldata = _.chain(alldata).pluck("data").value();
+                var count = 0;
+                var interval = window.setInterval(function () {
+                    var data = alldata.pop();
+                    
+                    if (!data) {
+                        console.log("no data", alldata.length);
+                        return;
+                    }
+                    console.log("pop", data, count);
+                    count += 1;
+                    if (count > 250) {
+                        window.clearInterval(interval);
+                    }
+
+                    if (data.action == "tab-open") {
+                        addTab(data);
+                    } else if (data.action === "tab-activate") {
+                        activateTab(data);
+                    } else if (data.action === "tab-ready") {
+                        readyTab(data);
+                    }
+                    
+                    if (data.action === "mouseup") {
+                        if (data.group === "in-content") {
+                            var height = 1200;
+                            var width = 1500;
+                            var panel = $(".panel.active");
+                            var panelWidth = panel.width(),
+                                panelHeight = panel.height(),
+                                panelLeft = panel.offset().left,
+                                panelTop = panel.offset().top;
+                            var top = ((panelHeight / height) * data.screenY) + panelTop;
+                            var left = ((panelWidth / width) * data.screenX) + panelLeft;
+                            //console.log(left, top, panelWidth, panelHeight, data.screenX, data.screenY, panelLeft, panelTop);
+                            $("<div class='mouse-click'/>").appendTo('body').css({ 'top' : top, 'left' : left }).show().addClass("mouse-clicking").delay(2 * 1000).fadeOut(function () { $(this).remove(); });
+                        }
+                    }
+                    if (data.action === "keydown")  {
+                        if (data.group === "searchbar:keydown") {
+                            $("#searchbar").focus().val(data.query);
+                            if (data.keycode === 13) { // enter
+                                
+                            }
+                            // XXX this sucks, if we had keyup events we'd know what the value is
+                            if (data.keycode ===8) { // backspace
+                                $("#searchbar").focus().val(data.query.substring(0,data.query.length -1));
+                            }
+                        }
+                        if (data.group === "urlbar:keydown") {
+                            $("#urlbar").focus().val(data.query);
+                        }
+                    }
+
+                    //if ($(".tab").length > 4) {
+                    //    console.log("CLOSING");
+                    //    closeTab($(".tab").first().data("options").tabid);
+                    //}
+                    
+                }, 250);
+              }
+            )
+        });
+    </script>
+    </body>
+</html>
