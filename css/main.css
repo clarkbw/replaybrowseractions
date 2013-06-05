@@ -462,7 +462,46 @@ body {
     line-height: 18px;
 }
 
-.mouse-click {
+.key-down {
+    top:  100px;
+    left: 50%;
+    position: absolute;
+    z-index: 1000;
+    width: 120px;
+    height: 70px;
+    border-radius: 5px;
+    background-color: #222;
+    opacity: 0.8;
+    -webkit-box-shadow:
+            0 0 8px #bbb,
+            0 1px 0 #aaa,
+            0 4px 0 #bbb,
+            0 10px 30px #ddd;
+    -moz-box-shadow:
+            0 0 8px #bbb,
+            0 1px 0 #aaa,
+            0 4px 0 #bbb,
+            0 10px 30px #ddd;
+    box-shadow:
+            0 0 8px #bbb,
+            0 1px 0 #aaa,
+            0 4px 0 #bbb,
+            0 10px 30px #ddd;
+}
+
+.key-down .modifier,
+.key-down .key {
+    width: 44px;
+    height:  44px;
+    margin: 5px;
+    padding: 20px 0px;
+    color: #fff;
+    display: inline-block;
+    text-align: center;
+}
+
+.content-mouse-click,
+.chrome-mouse-click {
   position: absolute;
   pointer-events: none;
   z-index: 1000;
@@ -475,6 +514,14 @@ body {
   -moz-transition-duration: 2s;
   -moz-transition-timing-function: ease;
 }
+
+.content-mouse-click {
+  border-color: rgba(288, 58, 41, 1);
+}
+.chrome-mouse-click {
+  border-color: rgba(93, 108, 255, 1);
+}
+
 /* This class is immediately applied for the purpose of transitioning:*/
 .mouse-clicking {
     width: 40px;
@@ -483,6 +530,7 @@ body {
     border-radius: 20px;
     border: 3px solid rgba(0, 0, 0, 0);
 }
+
 
 /* ==========================================================================
    Helper classes

@@ -35,10 +35,22 @@
     </div>
     </div>
 
+    <div class="key-down" style="display: none;">
+        <div class="modifier">&#8984;</div>
+        <div class="key">K</div>
+    </div>
+
     <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.1/jquery.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.1.6/d3.min.js"></script>
     <script type="text/javascript">
+        // helper that hides URLs we don't usually see
+        function _setURL(url) {
+            if (url === "about:home" || url === "about:newtab" || url === "about:blank") {
+                url = "";
+            }
+            $("#urlbar").val(url);
+        }
         function activateTab(options) {
             var id = options.tabid,
                 tab = $("#tab-" + id),
@@ -57,7 +69,7 @@
             }
             tab.addClass("active");
             panel.addClass("active");
-            $("#urlbar").val(tab.data("options").url);
+            _setURL(tab.data("options").url);
             panel.empty().append($("<pre/>").text(JSON.stringify(options,null, " ")));
         }
         function readyTab(options) {
@@ -79,7 +91,7 @@
 
             tab.data("options", options);
             tab.find(".label").text(options.title);
-            $("#urlbar").val(options.url);
+            _setURL(options.url);
             panel.empty().append($("<pre/>").text(JSON.stringify(options,null, " ")));
         }
         function addTab(options) {
@@ -104,7 +116,7 @@
                 }
                 tab.addClass("active");
                 panel.addClass("active");
-                $("#urlbar").val(tab.data("options").url);
+                _setURL(tab.data("options").url);
             };
 
             tab.click(activate);
@@ -120,7 +132,6 @@
             var tab = $("#tab-" + id),
                 panel = $("#panel-" + id);
             if (panel.hasClass("active") && tab.hasClass("active") && tab.next(".tab").length > 0) {
-                console.log("ACTIVATING", id);
                 activateTab(tab.next(".tab").data("options"));
             }
             tab.remove();
@@ -141,9 +152,8 @@
                         console.log("no data", alldata.length);
                         return;
                     }
-                    console.log("pop", data, count);
                     count += 1;
-                    if (count > 250) {
+                    if (count > 850) {
                         window.clearInterval(interval);
                     }
 
@@ -153,9 +163,13 @@
                         activateTab(data);
                     } else if (data.action === "tab-ready") {
                         readyTab(data);
-                    }
-                    
-                    if (data.action === "mouseup") {
+                    } else if (data.action === "tab-close") {
+                        closeTab(data.tabid);
+                    } else if (data.action === "tab-pageshow") {
+                        //console.log(data.action, data.tabid);
+                    } else if (data.action === "tab-deactivate") {
+                        // ignore for now
+                    } else if (data.action === "mouseup") {
                         if (data.group === "in-content") {
                             var height = 1200;
                             var width = 1500;
@@ -167,10 +181,12 @@
                             var top = ((panelHeight / height) * data.screenY) + panelTop;
                             var left = ((panelWidth / width) * data.screenX) + panelLeft;
                             //console.log(left, top, panelWidth, panelHeight, data.screenX, data.screenY, panelLeft, panelTop);
-                            $("<div class='mouse-click'/>").appendTo('body').css({ 'top' : top, 'left' : left }).show().addClass("mouse-clicking").delay(2 * 1000).fadeOut(function () { $(this).remove(); });
+                            $("<div class='content-mouse-click'/>").appendTo('body').css({ 'top' : top, 'left' : left }).show().addClass("mouse-clicking").delay(2 * 1000).fadeOut(function () { $(this).remove(); });
+                        } else {
+                            console.log("MOUSEUP", data);
                         }
-                    }
-                    if (data.action === "keydown")  {
+                    } else if (data.action === "keydown")  {
+
                         if (data.group === "searchbar:keydown") {
                             $("#searchbar").focus().val(data.query);
                             if (data.keycode === 13) { // enter
@@ -180,16 +196,66 @@
                             if (data.keycode ===8) { // backspace
                                 $("#searchbar").focus().val(data.query.substring(0,data.query.length -1));
                             }
-                        }
-                        if (data.group === "urlbar:keydown") {
+                        } else if (data.group === "urlbar:keydown") {
                             $("#urlbar").focus().val(data.query);
+                        } else if (data.group === "urlbar:keydown") {
+                            $("#urlbar").focus().val(data.query);
+                        } else {
+                            console.log("KEYDOWN", data);
                         }
+                    } else if (data.action === "click") {
+                        if (data.group === "toolbar:nav-bar") {
+                            // XXX should actually position the click where it supposed to be relatively
+                            $("<div class='chrome-mouse-click'/>").appendTo('body').css({ 'top' : $("#navbar").offset().top, 'left' : $("#navbar").offset().left + 30 }).show().addClass("mouse-clicking").delay(2 * 1000).fadeOut(function () { $(this).remove(); });
+                            $("#navbar").focus();
+                        } else {
+                            console.log(data.group, data);
+                        }
+                    } else if (data.group === "prefs-change") {
+                    } else if (data.group === "wheel" || data.group === "scroll") {
+                    } else if (data.action === "tracking") {
+                    } else if (data.action === "startup") {
+                    } else if (data.action === "cmd_newNavigatorTab") {
+                        var panel = $(".panel.active");
+                        var panelWidth = panel.width(),
+                            panelHeight = panel.height(),
+                            panelLeft = panel.offset().left,
+                            panelTop = panel.offset().top;
+                        var key = $("<div class='key-down'/>").append(
+                                                                      $("<div class='modifier'/>").html("&#8984;"),
+                                                                      $("<div class='key'/>").text("T")
+                                                                     );
+                        var top = ((panelHeight / 2) - (key.height() / 2)) + panelTop;
+                        var left = ((panelWidth / 2) - (key.width() / 2)) + panelLeft;
+                        key.css({ 'top' : top, 'left' : left });
+                        key.appendTo('body').fadeIn().delay(1 * 1000).fadeOut();
+                    } else if (data.action === "cmd_close") {
+                        var panel = $(".panel.active");
+                        var panelWidth = panel.width(),
+                            panelHeight = panel.height(),
+                            panelLeft = panel.offset().left,
+                            panelTop = panel.offset().top;
+                        var key = $("<div class='key-down'/>").append(
+                                                                      $("<div class='modifier'/>").html("&#8984;"),
+                                                                      $("<div class='key'/>").text("W")
+                                                                     );
+                        var top = ((panelHeight / 2) - (key.height() / 2)) + panelTop;
+                        var left = ((panelWidth / 2) - (key.width() / 2)) + panelLeft;
+                        key.css({ 'top' : top, 'left' : left });
+                        key.appendTo('body').fadeIn().delay(1 * 1000).fadeOut();
+
+
+                    } else if (data.eventType === "set-cookie") {
+
+                    } else if (data.eventType === "SOCIAL_WIDGET_LOADED") {
+
+                    } else {
+                        console.log("unhandled", data, count);
                     }
 
-                    //if ($(".tab").length > 4) {
-                    //    console.log("CLOSING");
-                    //    closeTab($(".tab").first().data("options").tabid);
-                    //}
+                    if ($(".tab").length > 4) {
+                        closeTab($(".tab:not(.active)").first().data("options").tabid);
+                    }
                     
                 }, 250);
               }
