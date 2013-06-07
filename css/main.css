@@ -97,7 +97,7 @@ body {
 .window {
   position: relative;
   margin: 0;
-  width: 800px;
+  width: 1024px;
   background-color: hsla(194,19%,44%,.4);
   background-image: -moz-linear-gradient(top, rgba(255,255,255,0), rgba(255,255,255,.5) 200px, rgba(255,255,255,0.0) 203px), 
                     -moz-linear-gradient(left, rgba(255,255,255,.3), rgba(255,255,255,0) 20%, rgba(255,255,255,0) 80%, rgba(255,255,255,0.3)), 
@@ -115,6 +115,8 @@ body {
   overflow: hidden;
   font-size: 0;
   line-height: 0;
+  transition-property: width, height;
+  transition-duration: 2s;
 }
 
 /* Titlebar and Widgets */

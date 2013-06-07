@@ -42,7 +42,7 @@
 
     <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.4.4/underscore-min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.1/jquery.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.1.6/d3.min.js"></script>
+    <!--<script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.1.6/d3.min.js"></script>-->
     <script type="text/javascript">
         // helper that hides URLs we don't usually see
         function _setURL(url) {
@@ -140,10 +140,10 @@
         $(document).ready(function () {
             //addTab({ id : 1234, url : "http://mozilla.org", title : "Mozilla.org" });
             addTab({ tabid : 0, url : "about:blank", title : "" });
-            var alldata;
+            var alldata, firstTab = false;
             $.getJSON("sample.json",function(data){alldata = data;}).done(
               function () {
-                alldata = _.chain(alldata).pluck("data").value();
+                alldata = _.chain(alldata).sortBy(function (e) { return e.eventstoreid; }).pluck("data").value();
                 var count = 0;
                 var interval = window.setInterval(function () {
                     var data = alldata.pop();
@@ -153,8 +153,14 @@
                         return;
                     }
                     count += 1;
-                    if (count > 850) {
+                    if (count > 3000) {
                         window.clearInterval(interval);
+                    }
+
+                    // ensure that we have a tab action to start with instead of random clicks
+                    if (!firstTab && data.action && data.action.indexOf("tab-") !== 0) {
+                        firstTab = true;
+                        return;
                     }
 
                     if (data.action == "tab-open") {
@@ -166,20 +172,14 @@
                     } else if (data.action === "tab-close") {
                         closeTab(data.tabid);
                     } else if (data.action === "tab-pageshow") {
-                        //console.log(data.action, data.tabid);
+                        activateTab(data);
                     } else if (data.action === "tab-deactivate") {
                         // ignore for now
                     } else if (data.action === "mouseup") {
                         if (data.group === "in-content") {
-                            var height = 1200;
-                            var width = 1500;
                             var panel = $(".panel.active");
-                            var panelWidth = panel.width(),
-                                panelHeight = panel.height(),
-                                panelLeft = panel.offset().left,
-                                panelTop = panel.offset().top;
-                            var top = ((panelHeight / height) * data.screenY) + panelTop;
-                            var left = ((panelWidth / width) * data.screenX) + panelLeft;
+                            var top = ((panel.height() / data.h) * data.pageY) + panel.offset().top;
+                            var left = ((panel.width() / data.w) * data.pageX) + panel.offset().left;
                             //console.log(left, top, panelWidth, panelHeight, data.screenX, data.screenY, panelLeft, panelTop);
                             $("<div class='content-mouse-click'/>").appendTo('body').css({ 'top' : top, 'left' : left }).show().addClass("mouse-clicking").delay(2 * 1000).fadeOut(function () { $(this).remove(); });
                         } else {
@@ -205,15 +205,24 @@
                         }
                     } else if (data.action === "click") {
                         if (data.group === "toolbar:nav-bar") {
+                            console.log("NAV-BAR", data);
                             // XXX should actually position the click where it supposed to be relatively
                             $("<div class='chrome-mouse-click'/>").appendTo('body').css({ 'top' : $("#navbar").offset().top, 'left' : $("#navbar").offset().left + 30 }).show().addClass("mouse-clicking").delay(2 * 1000).fadeOut(function () { $(this).remove(); });
                             $("#navbar").focus();
                         } else {
                             console.log(data.group, data);
                         }
+                    } else if (data.group === "tab-bar") {
+                        var w = $(".window");
+                        var top = ((w.height() / data.h) * data.browserY) + w.offset().top;
+                        var left = ((w.width() / data.w) * data.browserX) + w.offset().left;
+                        $("<div class='chrome-mouse-click'/>").appendTo('body').css({ 'top' : top, 'left' : left }).show().addClass("mouse-clicking").delay(2 * 1000).fadeOut(function () { $(this).remove(); });
+                    } else if (data.action === "context-reload") {
+                        // XXX for now just quiet down the reload actions
                     } else if (data.group === "prefs-change") {
                     } else if (data.group === "wheel" || data.group === "scroll") {
                     } else if (data.action === "tracking") {
+                    } else if (data.action === "activate" || data.action === "deactivate") {
                     } else if (data.action === "startup") {
                     } else if (data.action === "cmd_newNavigatorTab") {
                         var panel = $(".panel.active");
@@ -244,22 +253,35 @@
                         key.css({ 'top' : top, 'left' : left });
                         key.appendTo('body').fadeIn().delay(1 * 1000).fadeOut();
 
-
+                    } else if (data.group === "commands:tab") {
+                        // ignore tab command events for now.  we'll catch those as tab-* events
                     } else if (data.eventType === "set-cookie") {
 
                     } else if (data.eventType === "SOCIAL_WIDGET_LOADED") {
 
+                    } else if (data.type === "sizemodechange") {
+                        // STATE_MAXIMIZED  1
+                        // STATE_MINIMIZED  2
+                        // STATE_NORMAL     3
+                        // STATE_FULLSCREEN 4
+                        var sizemodes = {
+                            1 : { width : 1024, height : 600 },
+                            2 : { width : 800, height : 400 },
+                            3 : { width : 800, height : 400 },
+                            4 : { width : 1200, height : 768 }
+                        };
+                        $(".window").width(sizemodes[data.windowState].width).height(sizemodes[data.windowState].height);
                     } else {
                         console.log("unhandled", data, count);
                     }
 
-                    if ($(".tab").length > 4) {
+                    if (($(".tab").length + 1) * $(".tab").width() > $("#tabs").width()) {
                         closeTab($(".tab:not(.active)").first().data("options").tabid);
                     }
-                    
+
                 }, 250);
               }
-            )
+            );
         });
     </script>
     </body>
